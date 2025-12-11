@@ -1,0 +1,65 @@
+"""
+Type definitions and dataclasses for the table project.
+"""
+
+from dataclasses import dataclass
+from typing import Dict, List, Any
+
+@dataclass(frozen=True)
+class Vector3D:
+    """Type-safe 3D vector"""
+    x: float
+    y: float
+    z: float
+    
+    @classmethod
+    def from_list(cls, data: List[float]) -> 'Vector3D':
+        if len(data) != 3:
+            raise ValueError(f"Expected 3 elements, got {len(data)}")
+        return cls(data[0], data[1], data[2])
+    
+    def to_list(self) -> List[float]:
+        return [self.x, self.y, self.z]
+
+@dataclass
+class LegConfig:
+    """Leg configuration with validation"""
+    key: str
+    size: Vector3D
+    offset: Vector3D
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'LegConfig':
+        return cls(
+            key=str(data['key']),
+            size=Vector3D.from_list(data['size']),
+            offset=Vector3D.from_list(data['offset'])
+        )
+
+@dataclass
+class TabletopConfig:
+    """Tabletop configuration"""
+    size: Vector3D
+    position: Vector3D
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'TabletopConfig':
+        return cls(
+            size=Vector3D.from_list(data['size']),
+            position=Vector3D.from_list(data.get('position', [0.0, 0.0, 0.0]))
+        )
+
+@dataclass
+class ShapesConfig:
+    """Complete shapes configuration"""
+    tabletop: TabletopConfig
+    legs: List[LegConfig]
+    light_pos: Vector3D
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'ShapesConfig':
+        return cls(
+            tabletop=TabletopConfig.from_dict(data['tabletop']),
+            legs=[LegConfig.from_dict(leg) for leg in data['legs']],
+            light_pos=Vector3D.from_list(data.get('light_pos', [4.0, 8.0, 10.0]))
+        )

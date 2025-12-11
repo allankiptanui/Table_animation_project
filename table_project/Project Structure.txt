@@ -1,0 +1,8 @@
+table_project/
+├── main.py                 # Entry point
+├── config.py              # Configuration classes and loading
+├── types.py               # Type definitions and dataclasses
+├── renderer.py            # TableRenderer and GPU resource management
+├── window.py              # TableWindow class and event handling
+├── shaders.py             # Shader source code
+└── utilities.py           # Helper functions and geometry
